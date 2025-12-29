@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+openai:
+  api:
+    key: ***************************************************
+
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
