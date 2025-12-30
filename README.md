@@ -7,6 +7,7 @@ gcloud auth application-default print-access-token
 
 <br><br>
 mvn clean install<br>
+mvn spring-boot:run<br>
 curl -X POST http://localhost:8080/api/transcribe   -F "file=@Binod_Audio_Test.wav"
 <br>
 
