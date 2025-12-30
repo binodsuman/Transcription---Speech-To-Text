@@ -1,11 +1,13 @@
 # Transcription---Speech-To-Text
 
 To Test the code:
-
+If you are running code from IntelliJ console then run this command there itself. <br>
 export GOOGLE_APPLICATION_CREDENTIALS="/Users/binod/Downloads/google-stt-key.json" <br>
 gcloud auth application-default print-access-token
 
 <br><br>
+In IntelliJ Terminal<br>
+export GOOGLE_APPLICATION_CREDENTIALS="/Users/binod/Downloads/google-stt-key.json" <br>
 mvn clean install<br>
 mvn spring-boot:run<br>
 curl -X POST http://localhost:8080/api/transcribe   -F "file=@Binod_Audio_Test.wav"
