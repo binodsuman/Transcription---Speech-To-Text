@@ -1,6 +1,6 @@
 # Transcription---Speech-To-Text
 
-To Test the code:
+To Test the code: <br>
 If you are running code from IntelliJ console then run this command there itself. <br>
 export GOOGLE_APPLICATION_CREDENTIALS="/Users/binod/Downloads/google-stt-key.json" <br>
 gcloud auth application-default print-access-token
