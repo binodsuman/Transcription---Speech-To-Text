@@ -48,7 +48,12 @@
             <version>4.38.0</version>
         </dependency>
 
-
+         <dependency>
+            <groupId>com.microsoft.cognitiveservices.speech</groupId>
+            <artifactId>client-sdk</artifactId>
+            <version>1.38.0</version>
+        </dependency>
+             
     </dependencies>
 
     <build>
