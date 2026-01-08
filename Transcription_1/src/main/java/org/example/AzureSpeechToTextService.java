@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.util.concurrent.CountDownLatch;
 
 @Service
 public class AzureSpeechToTextService {
@@ -26,21 +26,41 @@ public class AzureSpeechToTextService {
         SpeechConfig config = SpeechConfig.fromSubscription(KEY, REGION);
         config.setSpeechRecognitionLanguage("en-US");
 
-        AudioConfig audioConfig = AudioConfig.fromWavFileInput(
-                tempFile.getAbsolutePath()
-        );
+        AudioConfig audioConfig =
+                AudioConfig.fromWavFileInput(tempFile.getAbsolutePath());
 
-        SpeechRecognizer recognizer = new SpeechRecognizer(config, audioConfig);
-        SpeechRecognitionResult result =
-                recognizer.recognizeOnceAsync().get();
+        SpeechRecognizer recognizer =
+                new SpeechRecognizer(config, audioConfig);
 
+        StringBuilder fullTranscript = new StringBuilder();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        recognizer.recognized.addEventListener((s, e) -> {
+            if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
+                fullTranscript.append(e.getResult().getText()).append(" ");
+            }
+        });
+
+        recognizer.canceled.addEventListener((s, e) -> {
+            System.err.println("CANCELED: " + e.getReason());
+            latch.countDown();
+        });
+
+        recognizer.sessionStopped.addEventListener((s, e) -> {
+            System.out.println("Session stopped.");
+            latch.countDown();
+        });
+
+        // 🚀 Start full audio processing
+        recognizer.startContinuousRecognitionAsync().get();
+
+        // ⏳ Wait until Azure finishes reading the WAV file
+        latch.await();
+
+        recognizer.stopContinuousRecognitionAsync().get();
         recognizer.close();
         tempFile.delete();
 
-        if (result.getReason() != ResultReason.RecognizedSpeech) {
-            throw new RuntimeException("Azure STT failed: " + result.getReason());
-        }
-
-        return result.getText();
+        return fullTranscript.toString().trim();
     }
 }
